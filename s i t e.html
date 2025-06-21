@@ -1,0 +1,1677 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>CineFlick - Filmes e Séries em HD</title>
+<style>
+  /* Reset básico */
+  *, *::before, *::after {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
+  html, body {
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1a0000;
+    color: #fff;
+    overflow-x: hidden; /* Evita scroll horizontal */
+  }
+  body {
+    line-height: 1.5;
+  }
+  a {
+    color: #ff4444;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  a:hover {
+    color: #ff7777;
+  }
+
+  /* Container principal centralizado */
+  .container {
+    max-width: 1200px;
+    padding: 0 20px;
+    margin: 0 auto;
+  }
+
+  /* Cabeçalho */
+  header {
+    background: #330000;
+    padding: 18px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 3px 7px rgba(255,68,68,0.6);
+    user-select: none;
+  }
+  nav.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #ff4444;
+    letter-spacing: 3px;
+    user-select: none;
+    cursor: pointer;
+    text-shadow: 0 0 7px #ff4444cc;
+  }
+
+  /* Menu tradicional */
+  ul.menu {
+    list-style: none;
+    display: flex;
+    gap: 35px;
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  ul.menu li {
+    cursor: pointer;
+    position: relative;
+  }
+  ul.menu li::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 3px;
+    background: #ff4444;
+    bottom: -8px;
+    left: 0;
+    transition: width 0.3s ease;
+  }
+  ul.menu li:hover::after {
+    width: 100%;
+  }
+
+  /* Botão de 3 pontinhos (menu hamburguer) */
+  .menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 25px;
+    cursor: pointer;
+  }
+  .menu-toggle span {
+    display: block;
+    height: 3px;
+    background: #ff4444;
+    border-radius: 2px;
+  }
+
+  /* Menu mobile - escondido por padrão */
+  @media (max-width: 900px) {
+    ul.menu {
+      display: none;
+      position: fixed;
+      top: 60px;
+      right: 0;
+      background-color: #330000;
+      flex-direction: column;
+      width: 220px;
+      padding: 20px;
+      box-shadow: -4px 4px 12px #ff4444cc;
+      border-radius: 0 0 0 10px;
+      height: calc(100% - 60px);
+      overflow-y: auto;
+      z-index: 1001;
+    }
+    ul.menu.open {
+      display: flex;
+    }
+    ul.menu li {
+      margin-bottom: 20px;
+      font-size: 1.3rem;
+      user-select: none;
+    }
+    ul.menu li:last-child {
+      margin-bottom: 0;
+    }
+    .menu-toggle {
+      display: flex;
+    }
+  }
+
+  /* Banner principal */
+  .banner {
+    position: relative;
+    background:
+      linear-gradient(90deg, rgba(51,0,0,0.9) 0%, rgba(255,68,68,0.85) 100%),
+      url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80') no-repeat center/cover;
+    height: 600px;
+    display: flex;
+    align-items: center;
+    color: #fff;
+    text-shadow: 2px 2px 12px #660000cc;
+    padding: 0 20px;
+  }
+  .banner-content {
+    max-width: 700px;
+  }
+  .banner h1 {
+    font-size: 3.8rem;
+    font-weight: 900;
+    margin-bottom: 20px;
+    line-height: 1.1;
+  }
+  .banner p {
+    font-size: 1.4rem;
+    margin-bottom: 40px;
+    font-weight: 600;
+    color: #ffbbbb;
+  }
+  .btn-banner {
+    background-color: #ff4444;
+    color: #fff;
+    padding: 18px 45px;
+    font-size: 1.3rem;
+    border: none;
+    border-radius: 40px;
+    cursor: pointer;
+    font-weight: 900;
+    box-shadow: 0 0 18px #ff4444dd;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  .btn-banner:hover {
+    background-color: #ff6666;
+  }
+
+  /* Seção introdutória */
+  section.intro {
+    background-color: #220000;
+    padding: 50px 20px;
+    text-align: center;
+    box-shadow: inset 0 0 40px #ff4444aa;
+    margin-bottom: 60px;
+  }
+  section.intro h2 {
+    font-size: 2.6rem;
+    font-weight: 900;
+    color: #ff5555;
+    margin-bottom: 18px;
+    text-shadow: 1px 1px 4px #ff0000aa;
+  }
+  section.intro p {
+    font-size: 1.2rem;
+    color: #ffbbbb;
+    max-width: 900px;
+    margin: 0 auto;
+    font-weight: 600;
+  }
+
+  /* Seção Planos */
+  section#planos {
+    background-color: #2a0000;
+    padding: 60px 20px 80px;
+    display: flex;
+    justify-content: center;
+    gap: 35px;
+    flex-wrap: wrap;
+    box-shadow: inset 0 0 50px #ff4444aa;
+  }
+  .plano {
+    background: #440000;
+    border-radius: 20px;
+    padding: 35px 30px;
+    width: 320px;
+    box-shadow: 0 0 25px #ff4444cc;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    user-select: none;
+  }
+  .plano:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 0 35px #ff6666ff;
+  }
+  .plano h3 {
+    font-size: 2rem;
+    color: #ff5555;
+    margin-bottom: 18px;
+    font-weight: 900;
+    text-shadow: 0 0 10px #ff2222cc;
+  }
+  .preco {
+    font-size: 2.6rem;
+    color: #ff2222;
+    font-weight: 900;
+    margin-bottom: 25px;
+    letter-spacing: 1.5px;
+  }
+  .plano ul {
+    list-style: none;
+    margin-bottom: 30px;
+    color: #ff9999;
+    font-weight: 700;
+    font-size: 1.1rem;
+    line-height: 1.6;
+  }
+  .plano ul li {
+    margin-bottom: 14px;
+    padding-left: 22px;
+    position: relative;
+  }
+  .plano ul li::before {
+    content: "✔";
+    position: absolute;
+    left: 0;
+    color: #ff4444;
+    font-weight: 900;
+  }
+  .btn-compra {
+    background-color: #ff4444;
+    color: #fff;
+    text-align: center;
+    padding: 15px 0;
+    font-weight: 900;
+    border-radius: 35px;
+    box-shadow: 0 0 18px #ff4444cc;
+    transition: background-color 0.3s ease;
+    font-size: 1.3rem;
+    user-select: none;
+  }
+  .btn-compra:hover {
+    background-color: #ff7777;
+  }
+
+  /* Botão WhatsApp fixo */
+  #whatsapp-btn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background-color: #25d366;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    box-shadow: 0 0 25px #25d366cc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    z-index: 1100;
+  }
+  #whatsapp-btn:hover {
+    background-color: #1ebe57;
+  }
+  #whatsapp-btn img {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Responsividade */
+  @media (max-width: 900px) {
+    ul.menu {
+      display: none;
+      position: fixed;
+      top: 60px;
+      right: 0;
+      background-color: #330000;
+      flex-direction: column;
+      width: 220px;
+      padding: 20px;
+      box-shadow: -4px 4px 12px #ff4444cc;
+      border-radius: 0 0 0 10px;
+      height: calc(100% - 60px);
+      overflow-y: auto;
+      z-index: 1001;
+    }
+    ul.menu.open {
+      display: flex;
+    }
+    ul.menu li {
+      margin-bottom: 20px;
+      font-size: 1.3rem;
+      user-select: none;
+    }
+    ul.menu li:last-child {
+      margin-bottom: 0;
+    }
+    .menu-toggle {
+      display: flex;
+    }
+  }
+  @media (max-width: 480px) {
+    .banner h1 {
+      font-size: 2rem;
+    }
+    .btn-banner {
+      padding: 14px 30px;
+      font-size: 1.1rem;
+      max-width: 180px;
+    }
+  }
+</style>
+</head>
+<body>
+<header>
+  <nav class="container" aria-label="Menu principal">
+    <div class="logo" tabindex="0">CineFlick</div>
+
+    <ul class="menu" role="menu" id="menu-principal">
+      <li role="menuitem" tabindex="0">Início</li>
+      <li role="menuitem" tabindex="0">Filmes</li>
+      <li role="menuitem" tabindex="0">Séries</li>
+      <li role="menuitem" tabindex="0">Planos</li>
+      <li role="menuitem" tabindex="0">Contato</li>
+    </ul>
+
+    <div class="menu-toggle" aria-label="Abrir menu" aria-expanded="false" role="button" tabindex="0" id="menu-toggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </nav>
+</header>
+
+<section class="banner" aria-label="Banner principal do site CineFlick">
+  <div class="banner-content container">
+    <h1>Mais de 10.000 filmes e séries para você maratonar em HD!</h1>
+    <p>Sem travamentos, sem mensalidades no cartão. Assista quando e onde quiser com nossos planos exclusivos.</p>
+    <button class="btn-banner" onclick="document.getElementById('planos').scrollIntoView({behavior:'smooth'})" aria-label="Veja os planos">Ver Planos</button>
+  </div>
+</section>
+
+<section class="intro" aria-label="Apresentação da plataforma CineFlick">
+  <div class="container">
+    <h2>O melhor do entretenimento na palma da sua mão</h2>
+    <p>Conteúdos atualizados diariamente, lançamentos do cinema, séries completas e muito mais. Tudo isso com a melhor qualidade e atendimento dedicado para você!</p>
+  </div>
+</section>
+
+<section id="planos" aria-label="Seção de planos CineFlick" class="container">
+  <article class="plano" tabindex="0">
+    <h3>Plano Mensal</h3>
+    <div class="preco">R$39,90</div>
+    <ul>
+      <li>Acesso ilimitado</li>
+      <li>Qualidade HD Full</li>
+      <li>Suporte 24 horas</li>
+      <li>Atualizações semanais</li>
+    </ul>
+    <a class="btn-compra" href="https://pay.kirvano.com/12e5cb1a-c3ac-4117-ad77-3c9b4ad54924?aff=c91830a0-09da-4ce8-8053-13e40fdeadcf" target="_blank" rel="noopener noreferrer" aria-label="Assinar Plano Mensal">Assinar Mensal</a>
+  </article>
+  <article class="plano" tabindex="0">
+    <h3>Plano Trimestral</h3>
+    <div class="preco">R$59,90</div>
+    <ul>
+      <li>Acesso ilimitado</li>
+      <li>Qualidade HD Full</li>
+      <li>Suporte 24 horas</li>
+      <li>Atualizações semanais</li>
+    </ul>
+    <a class="btn-compra" href="https://pay.kirvano.com/0052bd70-a705-4c47-9c54-44167c70bc7f?aff=c91830a0-09da-4ce8-8053-13e40fdeadcf" target="_blank" rel="noopener noreferrer" aria-label="Assinar Plano Trimestral">Assinar Trimestral</a>
+  </article>
+  <article class="plano" tabindex="0">
+    <h3>Plano Semestral</h3>
+    <div class="preco">R$89,90</div>
+    <ul>
+      <li>Acesso ilimitado</li>
+      <li>Qualidade HD Full</li>
+      <li>Suporte 24 horas</li>
+      <li>Atualizações semanais</li>
+    </ul>
+    <a class="btn-compra" href="https://pay.kirvano.com/e697d1e7-1c2d-432d-bd2e-6cc8786fbd9b?aff=c91830a0-09da-4ce8-8053-13e40fdeadcf" target="_blank" rel="noopener noreferrer" aria-label="Assinar Plano Semestral">Assinar Semestral</a>
+  </article>
+  <article class="plano" tabindex="0">
+    <h3>Plano Anual</h3>
+    <div class="preco">R$189,90</div>
+    <ul>
+      <li>Acesso ilimitado</li>
+      <li>Qualidade HD Full</li>
+      <li>Suporte 24 horas</li>
+      <li>Atualizações semanais</li>
+    </ul>
+    <a class="btn-compra" href="https://pay.kirvano.com/a8742772-2ece-4227-bb9c-8dacc9ac87ed?aff=c91830a0-09da-4ce8-8053-13e40fdeadcf" target="_blank" rel="noopener noreferrer" aria-label="Assinar Plano Anual">Assinar Anual</a>
+  </article>
+</section>
+
+<!-- Botão fixo WhatsApp -->
+<a href="https://wa.me/5562981612519" id="whatsapp-btn" target="_blank" rel="noopener noreferrer" aria-label="Contato WhatsApp">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="Ícone WhatsApp" />
+</a>
+
+<script>
+  const toggle = document.getElementById('menu-toggle');
+  const menu = document.getElementById('menu-principal');
+
+  function toggleMenu() {
+    const isOpen = menu.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', isOpen);
+  }
+
+  toggle.addEventListener('click', toggleMenu);
+
+  toggle.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleMenu();
+    }
+  });
+</script>
+</body>
+</html>
+<style>
+  /* Estilos adicionais para a seção recomendações */
+  section#recomendacoes {
+    background-color: #220000;
+    padding: 50px 20px 80px;
+    box-shadow: inset 0 0 50px #ff4444aa;
+    color: #ffbbbb;
+  }
+  section#recomendacoes .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  section#recomendacoes h2 {
+    font-size: 2.6rem;
+    font-weight: 900;
+    color: #ff5555;
+    margin-bottom: 30px;
+    text-shadow: 1px 1px 6px #ff0000cc;
+    user-select: none;
+  }
+
+  .carousel-wrapper {
+    position: relative;
+  }
+  .carousel {
+    display: flex;
+    gap: 18px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding-bottom: 10px;
+    scrollbar-width: none; /* Firefox */
+  }
+  .carousel::-webkit-scrollbar {
+    display: none; /* Chrome, Safari e Opera */
+  }
+
+  .card-filme {
+    flex: 0 0 160px;
+    background: #440000;
+    border-radius: 12px;
+    box-shadow: 0 0 18px #ff4444cc;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+  }
+  .card-filme:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px #ff6666ff;
+  }
+  .card-filme img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    border-bottom: 3px solid #ff4444;
+    display: block;
+  }
+  .card-info {
+    padding: 12px 10px;
+    color: #ffbbbb;
+  }
+  .card-info h3 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+    color: #ff4444;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card-info p {
+    font-size: 0.9rem;
+    color: #ff7777;
+  }
+
+  /* Setas de navegação */
+  .btn-carousel {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #ff4444dd;
+    border: none;
+    color: #fff;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 18px #ff4444cc;
+    transition: background 0.3s ease;
+    user-select: none;
+  }
+  .btn-carousel:hover {
+    background: #ff6666dd;
+  }
+  .btn-prev {
+    left: -18px;
+  }
+  .btn-next {
+    right: -18px;
+  }
+
+  /* Responsividade do carrossel */
+  @media (max-width: 700px) {
+    .card-filme {
+      flex: 0 0 130px;
+      height: auto;
+    }
+    .card-filme img {
+      height: 190px;
+    }
+  }
+  @media (max-width: 480px) {
+    section#recomendacoes h2 {
+      font-size: 1.9rem;
+    }
+    .btn-carousel {
+      width: 30px;
+      height: 30px;
+    }
+  }
+</style>
+
+<section id="recomendacoes" aria-label="Filmes e séries recomendados">
+  <div class="container">
+    <h2>Recomendações para Você</h2>
+    <div class="carousel-wrapper" aria-live="polite">
+      <button class="btn-carousel btn-prev" aria-label="Filmes anteriores">&#10094;</button>
+      <div class="carousel" id="carousel">
+        <!-- Cards de filmes/séries -->
+        <article class="card-filme" tabindex="0" role="group" aria-label="Filme: Inception">
+          <img src="https://image.tmdb.org/t/p/w500/qmDpIHrmpJINaRKAfWQfftjCdyi.jpg" alt="Poster do filme Inception" />
+          <div class="card-info">
+            <h3>Inception</h3>
+            <p>Filme</p>
+          </div>
+        </article>
+        <article class="card-filme" tabindex="0" role="group" aria-label="Série: Stranger Things">
+          <img src="https://image.tmdb.org/t/p/w500/x2LSRK2Cm7MZhjluni1msVJ3wDF.jpg" alt="Poster da série Stranger Things" />
+          <div class="card-info">
+            <h3>Stranger Things</h3>
+            <p>Série</p>
+          </div>
+        </article>
+        <article class="card-filme" tabindex="0" role="group" aria-label="Filme: The Dark Knight">
+          <img src="https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg" alt="Poster do filme The Dark Knight" />
+          <div class="card-info">
+            <h3>The Dark Knight</h3>
+            <p>Filme</p>
+          </div>
+        </article>
+        <article class="card-filme" tabindex="0" role="group" aria-label="Série: Game of Thrones">
+          <img src="https://image.tmdb.org/t/p/w500/u3bZgnGQ9T01sWNhyveQz0wH0Hl.jpg" alt="Poster da série Game of Thrones" />
+          <div class="card-info">
+            <h3>Game of Thrones</h3>
+            <p>Série</p>
+          </div>
+        </article>
+        <article class="card-filme" tabindex="0" role="group" aria-label="Filme: Interstellar">
+          <img src="https://image.tmdb.org/t/p/w500/rAiYTfKGqDCRIIqo664sY9XZIvQ.jpg" alt="Poster do filme Interstellar" />
+          <div class="card-info">
+            <h3>Interstellar</h3>
+            <p>Filme</p>
+          </div>
+        </article>
+        <article class="card-filme" tabindex="0" role="group" aria-label="Série: Breaking Bad">
+          <img src="https://image.tmdb.org/t/p/w500/ggFHVNu6YYI5L9pCfOacjizRGt.jpg" alt="Poster da série Breaking Bad" />
+          <div class="card-info">
+            <h3>Breaking Bad</h3>
+            <p>Série</p>
+          </div>
+        </article>
+      </div>
+      <button class="btn-carousel btn-next" aria-label="Próximos filmes">&#10095;</button>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Navegação do carrossel
+  const carousel = document.getElementById('carousel');
+  const btnPrev = document.querySelector('.btn-prev');
+  const btnNext = document.querySelector('.btn-next');
+
+  btnPrev.addEventListener('click', () => {
+    carousel.scrollBy({left: -180, behavior: 'smooth'});
+  });
+  btnNext.addEventListener('click', () => {
+    carousel.scrollBy({left: 180, behavior: 'smooth'});
+  });
+</script>
+<style>
+  /* Estilo FAQ */
+  section#faq {
+    background-color: #330000;
+    padding: 50px 20px 70px;
+    color: #ffbbbb;
+    box-shadow: inset 0 0 40px #ff4444aa;
+  }
+  section#faq .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  section#faq h2 {
+    font-size: 2.6rem;
+    font-weight: 900;
+    color: #ff5555;
+    margin-bottom: 40px;
+    text-align: center;
+    user-select: none;
+    text-shadow: 1px 1px 5px #ff0000cc;
+  }
+  .faq-item {
+    background: #440000;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 18px #ff4444cc;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s ease;
+  }
+  .faq-item:hover {
+    background-color: #550000;
+  }
+  .faq-question {
+    padding: 18px 25px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #ff6666;
+    position: relative;
+  }
+  .faq-question::after {
+    content: '+';
+    position: absolute;
+    right: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.8rem;
+    color: #ff4444;
+    transition: transform 0.3s ease;
+  }
+  .faq-item.open .faq-question::after {
+    content: '−';
+    transform: translateY(-50%) rotate(180deg);
+  }
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 25px;
+    font-size: 1.1rem;
+    color: #ffbbbb;
+    line-height: 1.5;
+    transition: max-height 0.35s ease, padding 0.35s ease;
+  }
+  .faq-item.open .faq-answer {
+    max-height: 300px; /* suficiente para a resposta */
+    padding: 15px 25px 25px;
+  }
+
+  /* Responsividade FAQ */
+  @media (max-width: 480px) {
+    section#faq h2 {
+      font-size: 2rem;
+    }
+    .faq-question {
+      font-size: 1.1rem;
+      padding: 15px 20px;
+    }
+    .faq-question::after {
+      right: 20px;
+      font-size: 1.5rem;
+    }
+    .faq-answer {
+      font-size: 1rem;
+      padding: 0 20px;
+    }
+    .faq-item.open .faq-answer {
+      padding: 12px 20px 20px;
+    }
+  }
+</style>
+
+<section id="faq" aria-label="Perguntas Frequentes">
+  <div class="container">
+    <h2>Perguntas Frequentes</h2>
+
+    <article class="faq-item" tabindex="0">
+      <header class="faq-question">Como funciona o acesso aos filmes e séries?</header>
+      <div class="faq-answer">
+        Após a confirmação do pagamento, você receberá um link exclusivo para acessar todo o nosso catálogo, que está disponível 24/7 para você assistir onde quiser.
+      </div>
+    </article>
+
+    <article class="faq-item" tabindex="0">
+      <header class="faq-question">Posso cancelar a assinatura a qualquer momento?</header>
+      <div class="faq-answer">
+        Sim! Nossos planos são sem fidelidade. Você pode cancelar quando quiser e continuar acessando até o final do período contratado.
+      </div>
+    </article>
+
+    <article class="faq-item" tabindex="0">
+      <header class="faq-question">Quais formas de pagamento são aceitas?</header>
+      <div class="faq-answer">
+        Aceitamos pagamentos via cartão de crédito, débito, Pix e boletos, tudo seguro e prático através dos links disponibilizados.
+      </div>
+    </article>
+
+    <article class="faq-item" tabindex="0">
+      <header class="faq-question">Os conteúdos são atualizados com que frequência?</header>
+      <div class="faq-answer">
+        Atualizamos nosso catálogo semanalmente com lançamentos, séries novas e conteúdos populares para você nunca ficar sem opções.
+      </div>
+    </article>
+
+    <article class="faq-item" tabindex="0">
+      <header class="faq-question">Posso assistir em vários dispositivos ao mesmo tempo?</header>
+      <div class="faq-answer">
+        Sim, o acesso é liberado para múltiplos dispositivos, como smartphones, tablets, smart TVs e computadores.
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<script>
+  // Script FAQ: abre e fecha itens ao clicar ou pressionar Enter/Espaço
+  document.querySelectorAll('#faq .faq-item').forEach(item => {
+    const question = item.querySelector('.faq-question');
+
+    function toggleOpen() {
+      item.classList.toggle('open');
+    }
+
+    question.addEventListener('click', toggleOpen);
+
+    item.addEventListener('keydown', e => {
+      if(e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleOpen();
+      }
+    });
+  });
+</script>
+<style>
+  /* Estilos para a seção Benefícios */
+  section#beneficios {
+    background-color: #1f0000;
+    padding: 60px 20px 80px;
+    color: #ffbbbb;
+    box-shadow: inset 0 0 60px #ff4444cc;
+    text-align: center;
+  }
+  section#beneficios .container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  section#beneficios h2 {
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: #ff5555;
+    margin-bottom: 50px;
+    user-select: none;
+    text-shadow: 1px 1px 7px #ff0000cc;
+  }
+
+  .beneficios-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 40px;
+  }
+  .beneficio-item {
+    background: #440000;
+    border-radius: 18px;
+    box-shadow: 0 0 20px #ff4444cc;
+    width: 280px;
+    padding: 30px 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: default;
+    user-select: none;
+  }
+  .beneficio-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 30px #ff7777ff;
+  }
+  .beneficio-icon {
+    font-size: 3.8rem;
+    color: #ff4444;
+    margin-bottom: 20px;
+  }
+  .beneficio-titulo {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #ff2222;
+    margin-bottom: 12px;
+    text-shadow: 0 0 10px #ff2222cc;
+  }
+  .beneficio-desc {
+    font-size: 1.1rem;
+    color: #ffbbbb;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 920px) {
+    .beneficios-list {
+      justify-content: center;
+    }
+  }
+  @media (max-width: 600px) {
+    .beneficio-item {
+      width: 90%;
+    }
+  }
+</style>
+
+<section id="beneficios" aria-label="Benefícios do CineFlick">
+  <div class="container">
+    <h2>Por que escolher o CineFlick?</h2>
+    <div class="beneficios-list">
+
+      <div class="beneficio-item" tabindex="0" role="region" aria-label="Benefício: Conteúdo Atualizado">
+        <div class="beneficio-icon">🎬</div>
+        <div class="beneficio-titulo">Conteúdo Atualizado</div>
+        <div class="beneficio-desc">Lançamentos diários e séries completas para você nunca ficar sem opções novas para assistir.</div>
+      </div>
+
+      <div class="beneficio-item" tabindex="0" role="region" aria-label="Benefício: Alta Qualidade">
+        <div class="beneficio-icon">📺</div>
+        <div class="beneficio-titulo">Alta Qualidade</div>
+        <div class="beneficio-desc">Streaming em HD e Full HD para uma experiência visual imersiva e sem travamentos.</div>
+      </div>
+
+      <div class="beneficio-item" tabindex="0" role="region" aria-label="Benefício: Acesso Multi-Dispositivo">
+        <div class="beneficio-icon">💻</div>
+        <div class="beneficio-titulo">Acesso Multi-Dispositivo</div>
+        <div class="beneficio-desc">Assista pelo celular, tablet, computador ou smart TV com a mesma conta, onde quiser.</div>
+      </div>
+
+      <div class="beneficio-item" tabindex="0" role="region" aria-label="Benefício: Suporte Dedicado">
+        <div class="beneficio-icon">📞</div>
+        <div class="beneficio-titulo">Suporte Dedicado</div>
+        <div class="beneficio-desc">Equipe pronta para ajudar 24 horas por dia via WhatsApp para resolver qualquer dúvida.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<style>
+  /* Estilo seção Contato */
+  section#contato {
+    background-color: #2a0000;
+    padding: 60px 20px 80px;
+    color: #ffbbbb;
+    box-shadow: inset 0 0 50px #ff4444aa;
+  }
+  section#contato .container {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  section#contato h2 {
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: #ff5555;
+    margin-bottom: 35px;
+    user-select: none;
+    text-shadow: 1px 1px 7px #ff0000cc;
+  }
+  form#form-contato {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  form#form-contato input,
+  form#form-contato textarea {
+    background-color: #440000;
+    border: 2px solid #ff4444;
+    border-radius: 10px;
+    padding: 15px 20px;
+    color: #ffbbbb;
+    font-size: 1.1rem;
+    font-weight: 600;
+    resize: vertical;
+    transition: border-color 0.3s ease;
+  }
+  form#form-contato input:focus,
+  form#form-contato textarea:focus {
+    outline: none;
+    border-color: #ff7777;
+  }
+  form#form-contato button {
+    background-color: #ff4444;
+    color: #fff;
+    font-weight: 900;
+    font-size: 1.3rem;
+    padding: 16px 0;
+    border: none;
+    border-radius: 40px;
+    cursor: pointer;
+    box-shadow: 0 0 18px #ff4444cc;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  form#form-contato button:hover {
+    background-color: #ff7777;
+  }
+  /* Mensagem sucesso */
+  #msg-sucesso {
+    display: none;
+    margin-top: 15px;
+    color: #aaffaa;
+    font-weight: 700;
+  }
+
+  /* Mapa */
+  .mapa-container {
+    margin-top: 50px;
+    border: 3px solid #ff4444;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 0 25px #ff4444cc;
+    max-width: 900px;
+    height: 320px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  @media (max-width: 600px) {
+    form#form-contato input,
+    form#form-contato textarea {
+      font-size: 1rem;
+    }
+    form#form-contato button {
+      font-size: 1.1rem;
+    }
+    .mapa-container {
+      height: 220px;
+    }
+  }
+</style>
+
+<section id="contato" aria-label="Contato CineFlick">
+  <div class="container">
+    <h2>Fale Conosco</h2>
+
+    <form id="form-contato" aria-label="Formulário de contato">
+      <input type="text" id="nome" name="nome" placeholder="Seu nome" required aria-required="true" />
+      <input type="email" id="email" name="email" placeholder="Seu e-mail" required aria-required="true" />
+      <textarea id="mensagem" name="mensagem" rows="5" placeholder="Sua mensagem" required aria-required="true"></textarea>
+      <button type="submit" aria-label="Enviar mensagem">Enviar</button>
+      <div id="msg-sucesso" role="alert" aria-live="assertive">Mensagem enviada com sucesso!</div>
+    </form>
+
+    <div class="mapa-container" aria-label="Localização no mapa">
+      <iframe 
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3656.924322990495!2d-46.65603368444564!3d-23.564084867181743!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59cda23ccbc9%3A0x3b6f92e87db3c4e3!2sAvenida%20Paulista%2C%20S%C3%A3o%20Paulo%20-%20SP%2C%20Brasil!5e0!3m2!1spt-BR!2sus!4v1686327352523!5m2!1spt-BR!2sus" 
+        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa de localização"></iframe>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Simulação envio formulário
+  const form = document.getElementById('form-contato');
+  const msgSucesso = document.getElementById('msg-sucesso');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    // Aqui você pode integrar com backend ou serviço de email
+
+    // Exibe mensagem de sucesso
+    msgSucesso.style.display = 'block';
+
+    // Limpa formulário após envio
+    form.reset();
+
+    // Oculta a mensagem após 5 segundos
+    setTimeout(() => {
+      msgSucesso.style.display = 'none';
+    }, 5000);
+  });
+</script>
+<style>
+  /* Estilos para a seção Depoimentos */
+  section#depoimentos {
+    background-color: #2b0000;
+    padding: 60px 20px 80px;
+    color: #ffcccc;
+    box-shadow: inset 0 0 60px #ff4444cc;
+  }
+  section#depoimentos .container {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  section#depoimentos h2 {
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: #ff5555;
+    margin-bottom: 50px;
+    user-select: none;
+    text-shadow: 1px 1px 7px #ff0000cc;
+  }
+
+  .depoimento-item {
+    background: #440000;
+    border-radius: 20px;
+    box-shadow: 0 0 25px #ff5555cc;
+    padding: 30px 25px;
+    margin-bottom: 30px;
+    font-style: italic;
+    position: relative;
+  }
+  .depoimento-item::before {
+    content: """;
+    font-size: 4rem;
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    color: #ff6666;
+    opacity: 0.3;
+  }
+  .depoimento-text {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  .depoimento-autor {
+    font-weight: 900;
+    font-size: 1rem;
+    color: #ff2222;
+    user-select: none;
+    text-shadow: 0 0 8px #ff2222cc;
+  }
+
+  @media (max-width: 600px) {
+    section#depoimentos h2 {
+      font-size: 2.2rem;
+    }
+    .depoimento-item {
+      padding: 25px 20px;
+    }
+    .depoimento-text {
+      font-size: 1rem;
+    }
+  }
+</style>
+
+<section id="depoimentos" aria-label="Depoimentos de clientes">
+  <div class="container">
+    <h2>O que nossos clientes dizem</h2>
+
+    <article class="depoimento-item" tabindex="0" role="article" aria-label="Depoimento de Maria">
+      <p class="depoimento-text">
+        "Desde que assinei o CineFlick, nunca mais fiquei sem um filme novo para assistir. A qualidade é excelente e o catálogo sempre atualizado!"
+      </p>
+      <div class="depoimento-autor">-- Maria S.</div>
+    </article>
+
+    <article class="depoimento-item" tabindex="0" role="article" aria-label="Depoimento de João">
+      <p class="depoimento-text">
+        "A facilidade de acessar pelo celular e smart TV é incrível. Recomendo para todos que amam séries e filmes sem complicação."
+      </p>
+      <div class="depoimento-autor">-- João P.</div>
+    </article>
+
+    <article class="depoimento-item" tabindex="0" role="article" aria-label="Depoimento de Ana">
+      <p class="depoimento-text">
+        "O suporte via WhatsApp me ajudou rapidamente quando tive dúvidas. Atendimento muito eficiente e atencioso!"
+      </p>
+      <div class="depoimento-autor">-- Ana M.</div>
+    </article>
+
+  </div>
+</section>
+<style>
+  /* Estilos para a seção Newsletter */
+  section#newsletter {
+    background-color: #330000;
+    padding: 60px 20px 80px;
+    color: #ffbbbb;
+    box-shadow: inset 0 0 50px #ff4444bb;
+    text-align: center;
+  }
+  section#newsletter .container {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  section#newsletter h2 {
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: #ff5555;
+    margin-bottom: 30px;
+    user-select: none;
+    text-shadow: 1px 1px 6px #ff0000cc;
+  }
+  form#form-newsletter {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  form#form-newsletter input[type="email"] {
+    padding: 15px 20px;
+    font-size: 1.1rem;
+    border-radius: 40px;
+    border: 2px solid #ff4444;
+    background-color: #440000;
+    color: #ffbbbb;
+    font-weight: 700;
+    flex: 1 1 300px;
+    min-width: 250px;
+    transition: border-color 0.3s ease;
+  }
+  form#form-newsletter input[type="email"]:focus {
+    outline: none;
+    border-color: #ff7777;
+  }
+  form#form-newsletter button {
+    background-color: #ff4444;
+    color: #fff;
+    font-weight: 900;
+    font-size: 1.2rem;
+    padding: 15px 35px;
+    border: none;
+    border-radius: 40px;
+    cursor: pointer;
+    box-shadow: 0 0 18px #ff4444cc;
+    transition: background-color 0.3s ease;
+    user-select: none;
+    flex: 0 0 auto;
+  }
+  form#form-newsletter button:hover,
+  form#form-newsletter button:focus {
+    background-color: #ff7777;
+    outline: none;
+  }
+  #msg-newsletter {
+    margin-top: 18px;
+    color: #aaffaa;
+    font-weight: 700;
+    display: none;
+    user-select: none;
+  }
+
+  @media (max-width: 480px) {
+    form#form-newsletter {
+      flex-direction: column;
+      gap: 12px;
+    }
+    form#form-newsletter input[type="email"] {
+      flex: 1 1 auto;
+      min-width: 100%;
+    }
+    form#form-newsletter button {
+      width: 100%;
+      padding: 15px 0;
+    }
+  }
+</style>
+
+<section id="newsletter" aria-label="Inscreva-se na newsletter CineFlick">
+  <div class="container">
+    <h2>Receba novidades e promoções</h2>
+    <form id="form-newsletter" aria-label="Formulário para inscrição na newsletter">
+      <input type="email" name="email" id="email-newsletter" placeholder="Digite seu e-mail" required aria-required="true" />
+      <button type="submit" aria-label="Enviar inscrição">Inscrever-se</button>
+    </form>
+    <div id="msg-newsletter" role="alert" aria-live="polite">Obrigado por se inscrever!</div>
+  </div>
+</section>
+
+<script>
+  const formNewsletter = document.getElementById('form-newsletter');
+  const msgNewsletter = document.getElementById('msg-newsletter');
+
+  formNewsletter.addEventListener('submit', (e) => {
+    e.preventDefault();
+    // Aqui você pode integrar com backend ou serviço de email marketing
+
+    // Exibe mensagem de sucesso
+    msgNewsletter.style.display = 'block';
+
+    // Limpa o campo email
+    formNewsletter.reset();
+
+    // Oculta mensagem após 5 segundos
+    setTimeout(() => {
+      msgNewsletter.style.display = 'none';
+    }, 5000);
+  });
+</script>
+<style>
+  /* FAQ com cores ajustadas */
+  section#faq {
+    background-color: #2b0000;
+    padding: 60px 20px 80px;
+    color: #ffbbbb;
+    max-width: 900px;
+    margin: 0 auto 60px;
+    box-shadow: inset 0 0 60px #ff4444cc;
+    border-radius: 15px;
+  }
+  section#faq h2 {
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: #ff5555;
+    margin-bottom: 40px;
+    user-select: none;
+    text-align: center;
+    text-shadow: 1px 1px 7px #ff0000cc;
+  }
+  .faq-item {
+    background: #440000;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 20px #ff4444aa;
+    overflow: hidden;
+  }
+  .faq-question {
+    padding: 20px 25px;
+    font-size: 1.3rem;
+    font-weight: 800;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    color: #ff9999;
+    background-color: #3a0000;
+    border: none;
+    width: 100%;
+    text-align: left;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  .faq-question:hover,
+  .faq-question:focus {
+    background-color: #550000;
+    color: #ffbbbb;
+    outline: none;
+  }
+  .faq-question::after {
+    content: "▼";
+    position: absolute;
+    right: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.3rem;
+    color: #ff6666;
+    transition: transform 0.3s ease;
+  }
+  .faq-question.active::after {
+    transform: translateY(-50%) rotate(180deg);
+    color: #ff2222;
+  }
+  .faq-answer {
+    max-height: 0;
+    padding: 0 25px;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #ffbbbb;
+    transition: max-height 0.4s ease, padding 0.4s ease;
+    overflow: hidden;
+  }
+  .faq-answer.open {
+    max-height: 400px;
+    padding: 15px 25px 25px;
+  }
+  .faq-answer a {
+    color: #ff6666;
+    text-decoration: underline;
+  }
+  .faq-answer a:hover,
+  .faq-answer a:focus {
+    color: #ff2222;
+    outline: none;
+  }
+</style>
+
+<section id="faq" aria-label="Perguntas frequentes">
+  <h2>Perguntas Frequentes</h2>
+
+  <div class="faq-item">
+    <button class="faq-question" aria-expanded="false" aria-controls="resp1" id="pergunta1">
+      Quais dispositivos posso usar para assistir?
+    </button>
+    <div class="faq-answer" id="resp1" role="region" aria-labelledby="pergunta1" hidden>
+      Você pode assistir no celular, tablet, computador, smart TV e outros dispositivos compatíveis com streaming.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" aria-expanded="false" aria-controls="resp2" id="pergunta2">
+      Como funciona o pagamento para acesso ao site?
+    </button>
+    <div class="faq-answer" id="resp2" role="region" aria-labelledby="pergunta2" hidden>
+      O pagamento é único e liberado para o tempo contratado. Não há planos fixos — após o período, é necessário renovar o acesso realizando um novo pagamento para continuar assistindo.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" aria-expanded="false" aria-controls="resp3" id="pergunta3">
+      Posso cancelar meu acesso a qualquer momento?
+    </button>
+    <div class="faq-answer" id="resp3" role="region" aria-labelledby="pergunta3" hidden>
+      Sim! Como o pagamento é único, não há cobranças recorrentes. Basta não renovar quando desejar.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" aria-expanded="false" aria-controls="resp4" id="pergunta4">
+      A qualidade dos vídeos é boa?
+    </button>
+    <div class="faq-answer" id="resp4" role="region" aria-labelledby="pergunta4" hidden>
+      Trabalhamos com streaming em HD e Full HD para garantir a melhor experiência visual.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" aria-expanded="false" aria-controls="resp5" id="pergunta5">
+      Como entro em contato com o suporte?
+    </button>
+    <div class="faq-answer" id="resp5" role="region" aria-labelledby="pergunta5" hidden>
+      Nosso suporte está disponível 24h via WhatsApp pelo número <a href="https://wa.me/62981612519" target="_blank" rel="noopener noreferrer">(62) 98161-2519</a>.
+    </div>
+  </div>
+</section>
+
+<script>
+  const faqs = document.querySelectorAll('.faq-question');
+
+  faqs.forEach(faq => {
+    faq.addEventListener('click', () => {
+      const expanded = faq.getAttribute('aria-expanded') === 'true';
+      faq.setAttribute('aria-expanded', String(!expanded));
+
+      const answer = document.getElementById(faq.getAttribute('aria-controls'));
+      if(!expanded) {
+        answer.hidden = false;
+        answer.classList.add('open');
+        faq.classList.add('active');
+      } else {
+        answer.classList.remove('open');
+        setTimeout(() => { answer.hidden = true; }, 400);
+        faq.classList.remove('active');
+      }
+    });
+
+    faq.addEventListener('keydown', (e) => {
+      if(e.key === "Enter" || e.key === " "){
+        e.preventDefault();
+        faq.click();
+      }
+    });
+  });
+</script>
+
+<style>
+  footer {
+    background-color: #330000;
+    color: #ffbbbb;
+    padding: 40px 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    user-select: none;
+    box-shadow: inset 0 0 30px #ff4444cc;
+  }
+  footer .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  footer .contato {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+  }
+  footer .contato a {
+    color: #ff6666;
+    text-decoration: none;
+    font-weight: 700;
+    transition: color 0.3s ease;
+  }
+  footer .contato a:hover,
+  footer .contato a:focus {
+    color: #ff2222;
+    outline: none;
+  }
+  footer nav.footer-links {
+    margin-bottom: 25px;
+  }
+  footer nav.footer-links a {
+    color: #ff9999;
+    text-decoration: none;
+    margin: 0 15px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+  }
+  footer nav.footer-links a:hover,
+  footer nav.footer-links a:focus {
+    color: #ff4444;
+    outline: none;
+  }
+  footer .social-icons {
+    margin-bottom: 25px;
+  }
+  footer .social-icons a {
+    display: inline-block;
+    margin: 0 10px;
+    color: #ff7777;
+    font-size: 1.8rem;
+    transition: color 0.3s ease;
+    text-decoration: none;
+  }
+  footer .social-icons a:hover,
+  footer .social-icons a:focus {
+    color: #ff2222;
+    outline: none;
+  }
+  footer p.copy {
+    font-size: 0.9rem;
+    color: #aa4444;
+    user-select: none;
+  }
+
+  @media (max-width: 480px) {
+    footer nav.footer-links a {
+      margin: 0 8px;
+      font-size: 0.9rem;
+    }
+    footer .social-icons a {
+      font-size: 1.5rem;
+      margin: 0 8px;
+    }
+  }
+</style>
+
+<footer role="contentinfo">
+  <div class="container">
+    <div class="contato">
+      Contato WhatsApp: <a href="https://wa.me/62981612519" target="_blank" rel="noopener noreferrer">(62) 98161-2519</a>
+    </div>
+    <nav class="footer-links" aria-label="Links rápidos do rodapé">
+      <a href="#inicio">Início</a>
+      <a href="#filmes">Filmes</a>
+      <a href="#series">Séries</a>
+      <a href="#planos">Planos</a>
+      <a href="#contato">Contato</a>
+    </nav>
+    <div class="social-icons" aria-label="Redes sociais">
+      <a href="#" aria-label="Facebook" tabindex="0" title="Facebook" target="_blank" rel="noopener noreferrer">📘</a>
+      <a href="#" aria-label="Instagram" tabindex="0" title="Instagram" target="_blank" rel="noopener noreferrer">📸</a>
+      <a href="#" aria-label="Twitter" tabindex="0" title="Twitter" target="_blank" rel="noopener noreferrer">🐦</a>
+    </div>
+    <p class="copy">&copy; 2025 CineFlick. Todos os direitos reservados.</p>
+  </div>
+</footer>
+
+<style>
+  /* Fade in aprimorado */
+  .fade-in-section {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1s ease-out, transform 1s ease-out;
+    will-change: opacity, transform;
+  }
+  .fade-in-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Hover suave para botões e links */
+  button, .btn, a {
+    transition: all 0.25s ease;
+    position: relative;
+    z-index: 0;
+  }
+  button:hover, button:focus,
+  .btn:hover, .btn:focus,
+  a:hover, a:focus {
+    color: #ff8888;
+    text-shadow: 0 0 10px #ff5555;
+    transform: scale(1.06);
+    outline: none;
+  }
+  button::before, .btn::before, a::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 130%;
+    height: 130%;
+    background: rgba(255, 68, 68, 0.18);
+    border-radius: 12px;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.25s ease;
+    z-index: -1;
+  }
+  button:hover::before, button:focus::before,
+  .btn:hover::before, .btn:focus::before,
+  a:hover::before, a:focus::before {
+    transform: translate(-50%, -50%) scale(1);
+  }
+</style>
+
+<!-- Canvas para partículas -->
+<canvas id="particles-canvas" style="position: fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index: 0;"></canvas>
+
+<script>
+  // Fade in suave ao scroll
+  const faders = document.querySelectorAll('.fade-in-section');
+
+  const appearOptions = {
+    threshold: 0.15,
+    rootMargin: "0px 0px -100px 0px"
+  };
+
+  const appearOnScroll = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    });
+  }, appearOptions);
+
+  faders.forEach(fader => {
+    appearOnScroll.observe(fader);
+  });
+
+  // Partículas vermelhas melhoradas no canvas
+  const canvas = document.getElementById('particles-canvas');
+  const ctx = canvas.getContext('2d');
+
+  let particlesArray = [];
+  let animationFrameId;
+
+  // Ajusta tamanho do canvas
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', () => {
+    resizeCanvas();
+    initParticles();
+  });
+
+  class Particle {
+    constructor(){
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.size = Math.random() * 2 + 1; // tamanho entre 1 e 3
+      this.speedX = (Math.random() - 0.5) * 0.3; // velocidade mais suave
+      this.speedY = (Math.random() - 0.5) * 0.3;
+      this.opacity = Math.random() * 0.4 + 0.15; // opacidade mais leve
+      this.life = Math.random() * 200 + 100; // ciclo de vida para piscar
+      this.lifeTick = 0;
+    }
+    update(){
+      this.x += this.speedX;
+      this.y += this.speedY;
+
+      this.lifeTick++;
+      if(this.lifeTick >= this.life){
+        this.opacity = Math.random() * 0.4 + 0.15; // muda opacidade para efeito sutil de piscar
+        this.lifeTick = 0;
+      }
+
+      // Borda: volta para o outro lado suavemente
+      if(this.x > canvas.width + this.size) this.x = -this.size;
+      else if(this.x < -this.size) this.x = canvas.width + this.size;
+      if(this.y > canvas.height + this.size) this.y = -this.size;
+      else if(this.y < -this.size) this.y = canvas.height + this.size;
+    }
+    draw(){
+      const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size*3);
+      gradient.addColorStop(0, `rgba(255, 80, 80, ${this.opacity})`);
+      gradient.addColorStop(1, 'rgba(255, 80, 80, 0)');
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function initParticles(){
+    particlesArray = [];
+    const numberOfParticles = Math.floor((canvas.width * canvas.height) / 20000);
+    for(let i=0; i < numberOfParticles; i++){
+      particlesArray.push(new Particle());
+    }
+  }
+
+  function animateParticles(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particlesArray.forEach(particle => {
+      particle.update();
+      particle.draw();
+    });
+    animationFrameId = requestAnimationFrame(animateParticles);
+  }
+
+  // Inicializa tudo
+  resizeCanvas();
+  initParticles();
+  animateParticles();
+</script>
+
+<script>// Adiciona a classe parallax-bg para todas as seções com background (exemplo)
+document.querySelectorAll('section').forEach(sec => {
+  const bg = window.getComputedStyle(sec).backgroundImage;
+  if(bg && bg !== 'none'){
+    sec.classList.add('parallax-bg');
+  }
+});
+</script>
